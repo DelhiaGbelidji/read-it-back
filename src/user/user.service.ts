@@ -1,6 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { hash } from 'bcrypt';
 
 @Injectable()
@@ -21,7 +26,6 @@ export class UserService {
         password: await hash(dto.password, 10),
       },
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = newUser;
 
     return result;
@@ -41,5 +45,37 @@ export class UserService {
         id: id,
       },
     });
+  }
+
+  async update(id: number, dto: UpdateUserDto) {
+    const user = await this.findById(id);
+
+    if (user && user.id !== id)
+      throw new ConflictException('Email already in use');
+
+    const updateData = { ...dto };
+
+    if (dto.password) {
+      updateData.password = await hash(dto.password, 10);
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: id },
+      data: updateData,
+    });
+
+    const { password, ...result } = updatedUser;
+    return result;
+  }
+
+  async delete(id: number) {
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('User not found');
+
+    await this.prisma.user.delete({
+      where: { id: id },
+    });
+
+    return { message: 'User successfully deleted' };
   }
 }
