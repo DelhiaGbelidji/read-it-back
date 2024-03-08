@@ -77,13 +77,13 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found');
 
     const isMatch = await compare(
-      changePasswordDto.currentPassword,
+      changePasswordDto.old_password,
       user.password,
     );
     if (!isMatch)
       throw new BadRequestException('Current password is incorrect');
 
-    const hashedNewPassword = await hash(changePasswordDto.newPassword, 10);
+    const hashedNewPassword = await hash(changePasswordDto.new_password, 10);
     await this.prisma.user.update({
       where: { id: userId },
       data: { password: hashedNewPassword },
