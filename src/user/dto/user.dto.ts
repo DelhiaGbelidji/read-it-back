@@ -41,7 +41,7 @@ export class UpdateUserDto {
 
 export class ChangePasswordDto {
   @IsString()
-  currentPassword: string;
+  old_password: string;
 
   @IsString()
   @MinLength(8)
@@ -49,5 +49,5 @@ export class ChangePasswordDto {
     message:
       'Password must contain at least one number, one uppercase and one lowercase letter, and be at least 5 characters long',
   })
-  newPassword: string;
+  new_password: string;
 }

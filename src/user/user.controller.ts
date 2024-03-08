@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -17,14 +18,14 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get(':id')
-  async getUserProfile(@Param('id') id: number) {
+  async getUserProfile(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.findById(id);
   }
 
   @UseGuards(JwtGuard)
-  @Patch(':id')
+  @Patch(':id/update')
   async updateUser(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     await this.userService.updateUser(id, updateUserDto);
@@ -34,7 +35,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Patch(':id/change-password')
   async changePassword(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     await this.userService.changePassword(id, changePasswordDto);
@@ -43,7 +44,7 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Delete(':id')
-  async deleteUser(@Param('id') id: number) {
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.delete(id);
   }
 }
