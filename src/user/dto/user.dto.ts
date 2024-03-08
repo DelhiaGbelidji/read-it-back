@@ -1,4 +1,10 @@
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  MinLength,
+  Matches,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -11,6 +17,11 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
+  @MinLength(8)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/, {
+    message:
+      'Password must contain at least one number, one uppercase and one lowercase letter, and be at least 5 characters long',
+  })
   password: string;
 }
 
@@ -26,8 +37,17 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
   email: string;
+}
 
-  @IsOptional()
+export class ChangePasswordDto {
   @IsString()
-  password: string;
+  currentPassword: string;
+
+  @IsString()
+  @MinLength(8)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/, {
+    message:
+      'Password must contain at least one number, one uppercase and one lowercase letter, and be at least 5 characters long',
+  })
+  newPassword: string;
 }
