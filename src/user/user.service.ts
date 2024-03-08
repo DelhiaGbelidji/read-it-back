@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
-import { hash } from 'bcrypt';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  ChangePasswordDto,
+} from './dto/user.dto';
+import { hash, compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -47,25 +53,41 @@ export class UserService {
     });
   }
 
-  async update(id: number, dto: UpdateUserDto) {
-    const user = await this.findById(id);
+  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+    const { firstname, lastname, email } = updateUserDto;
 
-    if (user && user.id !== id)
-      throw new ConflictException('Email already in use');
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
 
-    const updateData = { ...dto };
-
-    if (dto.password) {
-      updateData.password = await hash(dto.password, 10);
-    }
-
-    const updatedUser = await this.prisma.user.update({
-      where: { id: id },
-      data: updateData,
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstname,
+        lastname,
+        email,
+      },
     });
+  }
 
-    const { password, ...result } = updatedUser;
-    return result;
+  async changePassword(
+    userId: number,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const isMatch = await compare(
+      changePasswordDto.currentPassword,
+      user.password,
+    );
+    if (!isMatch)
+      throw new BadRequestException('Current password is incorrect');
+
+    const hashedNewPassword = await hash(changePasswordDto.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedNewPassword },
+    });
   }
 
   async delete(id: number) {

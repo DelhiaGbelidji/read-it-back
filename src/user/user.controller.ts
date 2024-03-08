@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { UpdateUserDto } from './dto/user.dto';
+import { UpdateUserDto, ChangePasswordDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -27,7 +27,18 @@ export class UserController {
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.userService.update(id, updateUserDto);
+    await this.userService.updateUser(id, updateUserDto);
+    return { message: 'User updated successfully' };
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id/change-password')
+  async changePassword(
+    @Param('id') id: number,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    await this.userService.changePassword(id, changePasswordDto);
+    return { message: 'Password updated successfully' };
   }
 
   @UseGuards(JwtGuard)
