@@ -6,12 +6,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import {
-  CreateUserDto,
-  UpdateUserDto,
-  ChangePasswordDto,
-} from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { hash, compare } from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -52,7 +50,7 @@ export class UserService {
     });
   }
 
-  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+  async update(userId: number, updateUserDto: UpdateUserDto) {
     const { firstname, lastname, email } = updateUserDto;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -89,7 +87,7 @@ export class UserService {
     });
   }
 
-  async delete(id: number) {
+  async remove(id: number) {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException('User not found');
 

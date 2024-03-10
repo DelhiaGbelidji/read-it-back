@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class CommentsService {
-  create(createCommentDto: CreateCommentDto) {
-    return 'This action adds a new comment';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createCommentDto: CreateCommentDto, userId: number) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!userExists) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    const manuscriptExists = await this.prisma.manuscript.findUnique({
+      where: { id: createCommentDto.manuscriptId },
+    });
+    if (!manuscriptExists) {
+      throw new NotFoundException(
+        `Manuscript with ID ${createCommentDto.manuscriptId} not found.`,
+      );
+    }
+
+    const comment = await this.prisma.comment.create({
+      data: {
+        ...createCommentDto,
+        userId,
+      },
+    });
+    return comment;
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async findAll() {
+    return await this.prisma.comment.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findOne(id: number) {
+    return await this.prisma.comment.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(id: number, updateCommentDto: UpdateCommentDto) {
+    const { content } = updateCommentDto;
+
+    const comment = await this.prisma.comment.findUnique({ where: { id: id } });
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    return await this.prisma.comment.update({
+      where: { id: id },
+      data: { content },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(id: number) {
+    const comment = await this.findOne(id);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    await this.prisma.comment.delete({
+      where: { id: id },
+    });
+
+    return { message: 'Comment successfully deleted' };
   }
 }

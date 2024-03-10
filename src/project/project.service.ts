@@ -52,6 +52,6 @@ export class ProjectService {
       where: { id: id },
     });
 
-    return { message: 'User successfully deleted' };
+    return { message: 'Project successfully deleted' };
   }
 }

@@ -49,6 +49,7 @@ model Manuscript {
   comments    Comment[]
   userId    Int
   user      User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 
   @@map("manuscripts")
 }
@@ -60,6 +61,7 @@ model Comment {
   manuscript   Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
   userId       Int
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@map("comments")
 }

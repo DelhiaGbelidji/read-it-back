@@ -10,7 +10,14 @@ import { CommentsModule } from './comments/comments.module';
 import { ManuscriptsModule } from './manuscripts/manuscripts.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UserModule, AuthModule, ProjectModule, CommentsModule, ManuscriptsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    UserModule,
+    AuthModule,
+    ProjectModule,
+    CommentsModule,
+    ManuscriptsModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
