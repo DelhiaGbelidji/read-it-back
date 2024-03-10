@@ -3,20 +3,21 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  Patch,
   Param,
   Delete,
   UnauthorizedException,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { RequestWithUser } from 'src/types';
-// import { UpdateProjectDto } from './dto/update-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
-@Controller('project')
+@Controller('projects')
 @UseGuards(JwtGuard)
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
@@ -40,26 +41,30 @@ export class ProjectController {
       );
     }
 
-    return await this.projectService.createProject(createProjectDto, userId);
+    return await this.projectService.create(createProjectDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.projectService.findAll();
+  async findAll() {
+    return await this.projectService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.projectService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-  //   return this.projectService.update(+id, updateProjectDto);
-  // }
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const result = await this.projectService.update(id, updateProjectDto);
+    return { message: 'Project updated successfully', result };
+  }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.projectService.remove(id);
   }
 }
