@@ -16,6 +16,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.validateUser(dto);
     const payload = {
+      id: user.id,
       username: user.email,
       sub: {
         firstname: user.firstname,
@@ -52,6 +53,7 @@ export class AuthService {
 
   async refreshToken(user: any) {
     const payload = {
+      id: user.id,
       username: user.username,
       sub: user.sub,
     };

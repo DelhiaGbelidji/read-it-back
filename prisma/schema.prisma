@@ -14,9 +14,24 @@ datasource db {
 }
 
 model User {
-  id Int   @id @default(autoincrement())
-  email String @unique
-  firstname String 
-  lastname String
-  password String
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  firstname String
+  lastname  String
+  password  String
+  Project   Project[]
+
+  @@map("users")
+
+}
+
+model Project {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  image     String?
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("projects")
 }
