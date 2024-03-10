@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  Patch,
   Param,
   Delete,
   Req,
@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ManuscriptsService } from './manuscripts.service';
 import { CreateManuscriptDto } from './dto/create-manuscript.dto';
-// import { UpdateManuscriptDto } from './dto/update-manuscript.dto';
+import { UpdateManuscriptDto } from './dto/update-manuscript.dto';
 import { RequestWithUser } from 'src/types';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
@@ -54,13 +54,17 @@ export class ManuscriptsController {
     return await this.manuscriptsService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateManuscriptDto: UpdateManuscriptDto,
-  // ) {
-  //   return this.manuscriptsService.update(+id, updateManuscriptDto);
-  // }
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateManuscriptDto: UpdateManuscriptDto,
+  ) {
+    const result = await this.manuscriptsService.update(
+      id,
+      updateManuscriptDto,
+    );
+    return { message: 'Manuscript updated successfully', result };
+  }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {

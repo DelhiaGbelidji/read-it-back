@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateManuscriptDto } from './dto/create-manuscript.dto';
-// import { UpdateManuscriptDto } from './dto/update-manuscript.dto';
+import { UpdateManuscriptDto } from './dto/update-manuscript.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -44,9 +44,19 @@ export class ManuscriptsService {
     });
   }
 
-  // async update(id: number, updateManuscriptDto: UpdateManuscriptDto) {
-  //   return `This action updates a #${id} manuscript`;
-  // }
+  async update(id: number, updateManuscriptDto: UpdateManuscriptDto) {
+    const { title, file_url } = updateManuscriptDto;
+
+    const manuscript = await this.prisma.manuscript.findUnique({
+      where: { id: id },
+    });
+    if (!manuscript) throw new NotFoundException('Manuscript  not found');
+
+    return await this.prisma.manuscript.update({
+      where: { id: id },
+      data: { title, file_url },
+    });
+  }
 
   async remove(id: number) {
     const manuscript = await this.findOne(id);

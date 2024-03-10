@@ -22,7 +22,7 @@ import { RequestWithUser } from 'src/types';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @Post('create')
+  @Post()
   async create(
     @Body() createCommentDto: CreateCommentDto,
     @Req() req: RequestWithUser,
