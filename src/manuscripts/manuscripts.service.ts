@@ -62,6 +62,7 @@ export class ManuscriptsService {
     const manuscript = await this.findOne(id);
     if (!manuscript) throw new NotFoundException('Manuscript not found');
 
+    await this.prisma.comment.deleteMany({ where: { manuscriptId: id } });
     await this.prisma.manuscript.delete({
       where: {
         id: id,

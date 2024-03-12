@@ -60,7 +60,7 @@ export class ProjectController {
     @Body() updateProjectDto: UpdateProjectDto,
   ) {
     const result = await this.projectService.update(id, updateProjectDto);
-    return { message: 'Project updated successfully', result };
+    return result;
   }
 
   @Delete(':id')

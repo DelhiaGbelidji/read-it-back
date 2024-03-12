@@ -55,6 +55,9 @@ export class ProjectService {
         name,
         image,
       },
+      include: {
+        user: true,
+      },
     });
   }
 
@@ -62,6 +65,7 @@ export class ProjectService {
     const project = await this.findOne(id);
     if (!project) throw new NotFoundException('Project not found');
 
+    await this.prisma.manuscript.deleteMany({ where: { projectId: id } });
     await this.prisma.project.delete({
       where: { id: id },
     });
