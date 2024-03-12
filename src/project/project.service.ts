@@ -8,17 +8,31 @@ export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProjectDto: CreateProjectDto, userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
     const project = await this.prisma.project.create({
       data: {
         ...createProjectDto,
         userId: userId,
+      },
+      include: {
+        user: true,
       },
     });
     return project;
   }
 
   async findAll() {
-    return await this.prisma.project.findMany();
+    return await this.prisma.project.findMany({
+      include: {
+        user: true,
+      },
+    });
   }
 
   async findOne(id: number) {
