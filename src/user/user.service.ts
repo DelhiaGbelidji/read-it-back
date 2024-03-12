@@ -95,8 +95,6 @@ export class UserService {
     await this.prisma.manuscript.deleteMany({ where: { userId: id } });
     await this.prisma.project.deleteMany({ where: { userId: id } });
 
-    // Supprimez ensuite l'utilisateur
-    await this.prisma.user.delete({ where: { id } });
     await this.prisma.user.delete({
       where: { id: id },
     });
