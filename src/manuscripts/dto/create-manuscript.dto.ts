@@ -8,5 +8,5 @@ export class CreateManuscriptDto {
   file_url: string;
 
   @IsNumber()
-  projectId: number;
+  project_id: number;
 }

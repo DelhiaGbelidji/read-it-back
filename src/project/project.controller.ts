@@ -33,15 +33,15 @@ export class ProjectController {
       throw new UnauthorizedException();
     }
 
-    const userId = Number(user.id);
+    const user_id = Number(user.id);
 
-    if (!userId) {
+    if (!user_id) {
       throw new UnauthorizedException(
         'User ID is missing in the token payload',
       );
     }
 
-    return await this.projectService.create(createProjectDto, userId);
+    return await this.projectService.create(createProjectDto, user_id);
   }
 
   @Get()

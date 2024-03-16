@@ -6,5 +6,5 @@ export class CreateCommentDto {
   content: string;
 
   @IsNumber()
-  manuscriptId: number;
+  manuscript_id: number;
 }

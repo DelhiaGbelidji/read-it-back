@@ -7,26 +7,26 @@ import { PrismaService } from 'src/prisma.service';
 export class ManuscriptsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createManuscriptDto: CreateManuscriptDto, userId: number) {
+  async create(createManuscriptDto: CreateManuscriptDto, user_id: number) {
     const userExists = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
     });
     if (!userExists) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
+      throw new NotFoundException(`User with ID ${user_id} not found.`);
     }
 
     const projectExists = await this.prisma.project.findUnique({
-      where: { id: createManuscriptDto.projectId },
+      where: { id: createManuscriptDto.project_id },
     });
     if (!projectExists) {
       throw new NotFoundException(
-        `Project with ID ${createManuscriptDto.projectId} not found.`,
+        `Project with ID ${createManuscriptDto.project_id} not found.`,
       );
     }
     const manuscript = await this.prisma.manuscript.create({
       data: {
         ...createManuscriptDto,
-        userId,
+        user_id,
       },
     });
     return manuscript;
@@ -62,7 +62,7 @@ export class ManuscriptsService {
     const manuscript = await this.findOne(id);
     if (!manuscript) throw new NotFoundException('Manuscript not found');
 
-    await this.prisma.comment.deleteMany({ where: { manuscriptId: id } });
+    await this.prisma.comment.deleteMany({ where: { manuscript_id: id } });
     await this.prisma.manuscript.delete({
       where: {
         id: id,

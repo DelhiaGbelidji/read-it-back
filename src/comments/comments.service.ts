@@ -7,27 +7,27 @@ import { PrismaService } from 'src/prisma.service';
 export class CommentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createCommentDto: CreateCommentDto, userId: number) {
+  async create(createCommentDto: CreateCommentDto, user_id: number) {
     const userExists = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
     });
     if (!userExists) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
+      throw new NotFoundException(`User with ID ${user_id} not found.`);
     }
 
     const manuscriptExists = await this.prisma.manuscript.findUnique({
-      where: { id: createCommentDto.manuscriptId },
+      where: { id: createCommentDto.manuscript_id },
     });
     if (!manuscriptExists) {
       throw new NotFoundException(
-        `Manuscript with ID ${createCommentDto.manuscriptId} not found.`,
+        `Manuscript with ID ${createCommentDto.manuscript_id} not found.`,
       );
     }
 
     const comment = await this.prisma.comment.create({
       data: {
         ...createCommentDto,
-        userId,
+        user_id,
       },
     });
     return comment;

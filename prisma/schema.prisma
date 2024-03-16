@@ -14,54 +14,53 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  firstname String
-  lastname  String
-  password  String
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  firstname   String
+  lastname    String
+  password    String
   projects    Project[]
   manuscripts Manuscript[]
   comments    Comment[]
+  created_at  DateTime     @default(now())
 
   @@map("users")
-
 }
 
 model Project {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  image     String?
-  createdAt DateTime @default(now())
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  manuscript  Manuscript?
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  image      String?
+  created_at DateTime    @default(now())
+  user_id    Int
+  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  manuscript Manuscript?
 
   @@map("projects")
 }
 
-
 model Manuscript {
-  id          Int         @id @default(autoincrement())
-  title       String
-  file_url     String  @unique
-  projectId   Int @unique
-  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  comments    Comment[]
-  userId    Int
-  user      User @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  title      String
+  file_url   String    @unique
+  project_id Int       @unique
+  project    Project   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  comments   Comment[]
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+  created_at DateTime  @default(now())
 
   @@map("manuscripts")
 }
 
 model Comment {
-  id           Int        @id @default(autoincrement())
-  content      String
-  manuscriptId Int
-  manuscript   Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
-  userId       Int
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id            Int        @id @default(autoincrement())
+  content       String
+  manuscript_id Int
+  manuscript    Manuscript @relation(fields: [manuscript_id], references: [id], onDelete: Cascade)
+  user_id       Int
+  user          User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at    DateTime   @default(now())
 
   @@map("comments")
 }

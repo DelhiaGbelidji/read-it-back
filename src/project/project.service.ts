@@ -7,18 +7,18 @@ import { PrismaService } from 'src/prisma.service';
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProjectDto: CreateProjectDto, userId: number) {
+  async create(createProjectDto: CreateProjectDto, user_id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: user_id },
     });
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found.`);
+      throw new NotFoundException(`User with ID ${user_id} not found.`);
     }
 
     const project = await this.prisma.project.create({
       data: {
         ...createProjectDto,
-        userId: userId,
+        user_id: user_id,
       },
       include: {
         user: true,
@@ -65,7 +65,7 @@ export class ProjectService {
     const project = await this.findOne(id);
     if (!project) throw new NotFoundException('Project not found');
 
-    await this.prisma.manuscript.deleteMany({ where: { projectId: id } });
+    await this.prisma.manuscript.deleteMany({ where: { project_id: id } });
     await this.prisma.project.delete({
       where: { id: id },
     });

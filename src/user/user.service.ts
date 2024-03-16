@@ -67,10 +67,10 @@ export class UserService {
   }
 
   async changePassword(
-    userId: number,
+    user_id: number,
     changePasswordDto: ChangePasswordDto,
   ): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({ where: { id: user_id } });
     if (!user) throw new NotFoundException('User not found');
 
     const isMatch = await compare(
@@ -82,7 +82,7 @@ export class UserService {
 
     const hashedNewPassword = await hash(changePasswordDto.new_password, 10);
     await this.prisma.user.update({
-      where: { id: userId },
+      where: { id: user_id },
       data: { password: hashedNewPassword },
     });
   }
@@ -91,9 +91,9 @@ export class UserService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException('User not found');
 
-    await this.prisma.comment.deleteMany({ where: { userId: id } });
-    await this.prisma.manuscript.deleteMany({ where: { userId: id } });
-    await this.prisma.project.deleteMany({ where: { userId: id } });
+    await this.prisma.comment.deleteMany({ where: { user_id: id } });
+    await this.prisma.manuscript.deleteMany({ where: { user_id: id } });
+    await this.prisma.project.deleteMany({ where: { user_id: id } });
 
     await this.prisma.user.delete({
       where: { id: id },
