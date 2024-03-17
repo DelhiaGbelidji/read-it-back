@@ -42,7 +42,6 @@ export class ProjectService {
       },
       include: {
         user: true,
-        manuscript: true,
       },
     });
   }
