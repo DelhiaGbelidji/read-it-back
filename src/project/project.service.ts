@@ -40,6 +40,10 @@ export class ProjectService {
       where: {
         id: id,
       },
+      include: {
+        user: true,
+        manuscript: true,
+      },
     });
   }
 
