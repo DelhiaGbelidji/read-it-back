@@ -6,9 +6,9 @@ export class ChangePasswordDto {
 
   @IsString()
   @MinLength(8)
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/, {
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/, {
     message:
-      'Password must contain at least one number, one uppercase and one lowercase letter, and be at least 5 characters long',
+      'Password must contain at least one number, one uppercase and one lowercase letter, and be at least 8 characters long',
   })
   new_password: string;
 }
