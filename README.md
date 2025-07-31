@@ -57,6 +57,3 @@ yarn start
 ```
 
 This will start the NestJS server on a default port.
-
-## API Documentation
-NestJS projects often use Swagger for API documentation. If you've set up Swagger, you can access your API documentation at http://localhost:3000/api.
